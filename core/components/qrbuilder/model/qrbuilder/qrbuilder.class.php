@@ -154,10 +154,11 @@ class Qrbuilder {
             $end = $this->getTime($qrcode->get('end_date'));
             
             $now = time();// @TODO system setting time offset
+            $use_end = $qrcode->get('use_end_date');
             
-            if ( $start >= $now || $end < $now ) {
+            if ( $start > $now || ( $end < $now && $use_end ) ) {
                 $qrcode->set('active', 0);
-                $qrcode->save();
+                // $qrcode->save();
                 return;
             }
             // record stats:
