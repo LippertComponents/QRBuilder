@@ -1,0 +1,6 @@
+Changelog file for QR-Builder component.
+
+
+QR-Builder 1.0
+====================================
+- Initial Release

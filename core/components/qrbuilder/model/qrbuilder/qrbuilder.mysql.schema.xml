@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="qrbuilder" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+	<object class="QrcodeStats" table="qrcode_stats" extends="xPDOSimpleObject">
+		<field key="qrcode_id" dbtype="int" precision="11" phptype="integer" null="true" index="index" />
+		<field key="date" dbtype="date" phptype="date" null="true" />
+		<field key="day_hits" dbtype="int" precision="11" phptype="integer" null="true" />
+
+		<index alias="before insert" name="before insert" primary="false" unique="true" type="BTREE" >
+			<column key="qrcode_id" length="" collation="A" null="true" />
+			<column key="date" length="" collation="A" null="true" />
+		</index>
+		
+		<aggregate alias="Qrcode" class="Qrcodes" local="qrcode_id" foreign="id" cardinality="one" owner="foreign" />
+		
+	</object>
+	<object class="Qrcodes" table="qrcodes" extends="xPDOSimpleObject">
+		<field key="type" dbtype="set" precision="'qrcode','webad'" phptype="string" null="true" default="qrcode" />
+		<field key="name" dbtype="varchar" precision="128" phptype="string" null="true" />
+		<field key="description" dbtype="mediumtext" phptype="string" null="true" />
+		<field key="destination_url" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="hits" dbtype="int" precision="11" phptype="integer" null="true" default="0" />
+		<field key="override_url_input" dbtype="tinyint" precision="1" phptype="integer" null="true" default="0" />
+		<field key="build_url_params" dbtype="text" phptype="string" null="true" />
+		<field key="short_link" dbtype="varchar" precision="255" phptype="string" null="true" index="index" />
+		<field key="use_ad_link" dbtype="tinyint" precision="1" phptype="integer" null="true" default="0" />
+		<field key="redirect_type" dbtype="varchar" precision="4" phptype="string" null="true" default="301" />
+		<field key="qr_code_path" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="active" dbtype="tinyint" precision="1" phptype="integer" null="true" default="1" />
+		<field key="start_date" dbtype="date" phptype="date" null="true" default="2015-02-01" />
+		<field key="use_end_date" dbtype="tinyint" precision="1" phptype="integer" null="true" default="1" />
+		<field key="end_date" dbtype="date" phptype="date" null="true" />
+		<field key="create_date" dbtype="datetime" phptype="datetime" null="true" />
+		<field key="edit_date" dbtype="datetime" phptype="datetime" null="true" />
+		
+		<composite alias="Stats" class="QrcodeStats" local="id" foreign="qrcode_id" cardinality="many" owner="local" />
+
+		<index alias="URL Query" name="URL Query" primary="false" unique="true" type="BTREE" >
+			<column key="short_link" length="10" collation="A" null="true" />
+			<column key="active" length="" collation="A" null="true" />
+		</index>
+	</object>
+</model>
