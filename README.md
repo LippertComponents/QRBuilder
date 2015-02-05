@@ -12,7 +12,6 @@ QR Codes to be less complex so they will have better compatibility with QR scann
       - Name: qrbuilder
       - Core Path: {core_path}components/qrbuilder/
       - Assets Path: {assets_path}components/qrbuilder/
-    
  - create menu item
       - Lex Key: qrbuilder
       - Description: qrbuilder.desc
