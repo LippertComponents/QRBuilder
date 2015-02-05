@@ -91,6 +91,16 @@ Qrbuilder.grid.Qrbuilder = function(config) {
             // @TODO don't want an editor here, just copy and paste
             ,editor: { xtype: 'textfield' }
         },{
+            header: _('qrbuilder.grid.qr_code_path')
+            //,tpl: this.templates.thumb
+            ,renderer: function(value, cell) {
+                return '<a href="'+Qrbuilder.config.assetsUrl+value+'" download="'+Qrbuilder.config.assetsUrl+value+'" >'+_('qrbuilder.grid.download')+'</a>';
+            }
+            ,dataIndex: 'qr_code_path'
+            ,sortable: false
+            ,width: 85 
+            //,editor: { xtype: 'displayfield' }
+        },{
             header: _('qrbuilder.grid.description')
             ,dataIndex: 'description'
             ,sortable: false
