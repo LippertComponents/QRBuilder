@@ -1,8 +1,8 @@
 ## What does it do?
 QRBuilder is a CMP for MODX Revolution. It allows users to easily build customer QR codes in the MODX Manager. 
-These QR Codes have simple counter stats within the MODX Manager. It also allows builds into the URL parameters 
-for Analytics, like Google, Piwik or similar. It will build a short URL like http://mysite.com/qr*123 that would 
-redirect to the destination like http://mysite.com/folder/page.html?analytics_params=123&param2=abc&etc. This will allow the 
+These QR Codes have simple counter stats within the MODX Manager. It also allows and builds into the URL parameters 
+for Analytics, like Google, Piwik or similar. It will build a short URL like `http://mysite.com/qr*123` that would 
+redirect to the destination like `http://mysite.com/folder/page.html?analytics_params=123&param2=abc&etc`. This will allow the 
 QR Codes to be less complex so they will have better compatibility with QR scanners on smaller prints. 
 
 ## Manual install:
@@ -35,6 +35,7 @@ QR Codes to be less complex so they will have better compatibility with QR scann
 ## TODO before can be put into MODX Extras:
  - Build script
  - Work with multi context
- - more testing
+ - Make system settings or custom settings page
+ - More testing
 
 Fork and do a pull request on the above TODO list would be appreciated.
