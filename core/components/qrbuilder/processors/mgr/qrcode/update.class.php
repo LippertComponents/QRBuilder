@@ -71,7 +71,8 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
         // build link: destination
         if ( $this->getProperty('use_ad_link') ) {
             // override qr link builder
-            $short_link = ltrim($this->getProperty('short_link'), '/');
+            $short_link = str_replace(array('   ','  ',' '), '-', trim(trim($this->getProperty('short_link')), '/'));
+            // @TODO check for special chars, strtolower?
             if ( empty($short_link) ) {
                 // @TODO check that SEO/Freindly URLs are in place
                 $this->addFieldError('short_link', $this->modx->lexicon('qrbuilder.qrcode_err_empty_short_link'));
@@ -91,9 +92,10 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
         $site_url = str_replace('https://', 'http://', $this->modx->getOption('site_url'));
         $url = rtrim($site_url, '/').'/'.$this->getProperty('short_link');
         // build the QR Code:
-        $qr_code_path = $this->modx->qrbuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
+        $qr_codes = $this->modx->qrbuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
         //$this->addFieldError('name', 'Error Check for Update->beforeSet(), Path: '.$qr_code_path);
-        $this->setProperty('qr_code_path', $qr_code_path);
+        $this->setProperty('qr_png_path', $qr_codes['png']);
+        $this->setProperty('qr_svg_path', $qr_codes['svg']);
         
         return parent::beforeSet();
     }

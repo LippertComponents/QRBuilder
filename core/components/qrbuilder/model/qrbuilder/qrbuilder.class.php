@@ -101,7 +101,7 @@ class Qrbuilder {
         );
         
         //QRcode::png($url, $pngAbsoluteFilePath);
-        if ( 1 == 2 ) {
+        if ( 1 == 1 ) {
             /**
              * Creates SVG with QR-Code.
              * Simple helper function to create QR-Code SVG with one static call.
@@ -117,18 +117,21 @@ class Qrbuilder {
              **/
             $output = $qr->svg( 
                 $url,
-                $val['id'],
+                false, //$val['id'],
                 $svg_file,
                 QR_ECLEVEL_H,
-                $val['width'],
-                $val['size'],
-                $val['margin'],
-                $val['compress'],
-                $val['back_color'],
-                $val['fore_color']
+                800,//$val['width'],
+                100,//$val['size'],
+                10, //$val['margin'],
+                false//$val['compress'],
+                //$val['back_color'],
+                //$val['fore_color']
             );
         }
-        return $this->config['qrCodeDir'].$file_name.'.png';
+        return array(
+                'png' => $this->config['qrCodeDir'].$file_name.'.png',
+                'svg' => $this->config['qrCodeDir'].$file_name.'.svg',
+            );
     }
     
     /**

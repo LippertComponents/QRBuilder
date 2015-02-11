@@ -24,7 +24,8 @@
 		<field key="short_link" dbtype="varchar" precision="255" phptype="string" null="true" index="index" />
 		<field key="use_ad_link" dbtype="tinyint" precision="1" phptype="integer" null="true" default="0" />
 		<field key="redirect_type" dbtype="varchar" precision="4" phptype="string" null="true" default="301" />
-		<field key="qr_code_path" dbtype="varchar" precision="255" phptype="string" null="true" />
+		<field key="qr_png_path" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="qr_svg_path" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="active" dbtype="tinyint" precision="1" phptype="integer" null="true" default="1" />
 		<field key="start_date" dbtype="date" phptype="date" null="true" default="2015-02-01" />
 		<field key="use_end_date" dbtype="tinyint" precision="1" phptype="integer" null="true" default="1" />

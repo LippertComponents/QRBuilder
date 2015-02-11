@@ -54,7 +54,8 @@ Qrbuilder.grid.Qrbuilder = function(config) {
             'short_link',
             'use_ad_link', 
             'redirect_type', 
-            'qr_code_path',
+            'qr_png_path',
+            'qr_svg_path',
             'active',
             'start_date',
             'use_end_date',
@@ -91,12 +92,22 @@ Qrbuilder.grid.Qrbuilder = function(config) {
             // @TODO don't want an editor here, just copy and paste
             ,editor: { xtype: 'textfield' }
         },{
-            header: _('qrbuilder.grid.qr_code_path')
+            header: _('qrbuilder.grid.qr_png_path')
             //,tpl: this.templates.thumb
             ,renderer: function(value, cell) {
-                return '<a href="'+Qrbuilder.config.assetsUrl+value+'" download="'+Qrbuilder.config.assetsUrl+value+'" >'+_('qrbuilder.grid.download')+'</a>';
+                return '<a href="'+Qrbuilder.config.assetsUrl+value+'" download="'+Qrbuilder.config.assetsUrl+value+'" >'+_('qrbuilder.grid.download_png')+'</a>';
             }
-            ,dataIndex: 'qr_code_path'
+            ,dataIndex: 'qr_png_path'
+            ,sortable: false
+            ,width: 85 
+            //,editor: { xtype: 'displayfield' }
+        },{
+            header: _('qrbuilder.grid.qr_svg_path')
+            //,tpl: this.templates.thumb
+            ,renderer: function(value, cell) {
+                return '<a href="'+Qrbuilder.config.assetsUrl+value+'" download="'+Qrbuilder.config.assetsUrl+value+'" >'+_('qrbuilder.grid.download_svg')+'</a>';
+            }
+            ,dataIndex: 'qr_svg_path'
             ,sortable: false
             ,width: 85 
             //,editor: { xtype: 'displayfield' }
@@ -208,7 +219,8 @@ Ext.extend(Qrbuilder.grid.Qrbuilder,MODx.grid.Grid,{
     }
     ,updateQrcode: function(btn,e) {
         
-        myQRCodeImageUrl = Qrbuilder.config.assetsUrl+this.menu.record.qr_code_path;
+        myQRCodePNGImageUrl = Qrbuilder.config.assetsUrl+this.menu.record.qr_png_path;
+        myQRCodeSVGImageUrl = Qrbuilder.config.assetsUrl+this.menu.record.qr_svg_path;
         
         if (!this.updateQrcodeWindow) {
             this.updateQrcodeWindow = MODx.load({
@@ -222,17 +234,27 @@ Ext.extend(Qrbuilder.grid.Qrbuilder,MODx.grid.Grid,{
         this.updateQrcodeWindow.setValues(this.menu.record);
         this.updateQrcodeWindow.show(e.target);
         
-        
-        var ImagePath = Ext.select('#currentQRImagePath');
-        ImagePath.set({
-            src: myQRCodeImageUrl
+        var PNGImagePath = Ext.select('#pngQRImagePath');
+        PNGImagePath.set({
+            src: myQRCodePNGImageUrl
         });
         
-        var ImageLink = Ext.select('#currentQRImageA');
-        ImageLink.set({
-            href: myQRCodeImageUrl
+        var SVGImagePath = Ext.select('#svgQRImagePath');
+        SVGImagePath.set({
+            src: myQRCodeSVGImageUrl
         });
         
+        var PNGLink = Ext.select('#pngQRImageA');
+        PNGLink.set({
+            href: myQRCodePNGImageUrl,
+            download: myQRCodePNGImageUrl
+        });
+        
+        var SVGLink = Ext.select('#svgQRImageA');
+        SVGLink.set({
+            href: myQRCodeSVGImageUrl,
+            download: myQRCodeSVGImageUrl
+        });
     }
 
     ,removeQrcode: function() {
@@ -397,9 +419,10 @@ var QrbuilderImageTab = {
             ,name: 'short_link'
             ,anchor: '100%'
         }, {
-            html: '<p>'+_('qrbuilder.qrcode.qr_code_path')+'<a id="currentQRImageA" href="" target="_blank"><img id="currentQRImagePath" src="'+ this.value +'" style="max-width: 300px; max-height: 300px;" /></a></p>'
+            html: '<p>'+_('qrbuilder.qrcode.qr_png_path')+'<a id="pngQRImageA" href="" target="_blank" download=""><img id="pngQRImagePath" src="'+ this.value +'" style="max-width: 300px; max-height: 300px;" /></a></p>' +
+                  '<p>'+_('qrbuilder.qrcode.qr_svg_path')+'<a id="svgQRImageA" href="" target="_blank" download=""><img id="svgQRImagePath" src="'+ this.value +'" style="max-width: 300px; max-height: 300px;" /></a></p>'
             //,fieldLabel: _('qrbuilder.qrcode.qr_code_path')
-            ,name: 'upload_file'
+            ,name: 'qr_png_path'
         },
     ]
 };

@@ -16,7 +16,8 @@ $xpdo_meta_map['Qrcodes']= array (
     'short_link' => NULL,
     'use_ad_link' => 0,
     'redirect_type' => '301',
-    'qr_code_path' => NULL,
+    'qr_png_path' => NULL,
+    'qr_svg_path' => NULL,
     'active' => 1,
     'start_date' => '2015-02-01',
     'use_end_date' => 1,
@@ -100,7 +101,14 @@ $xpdo_meta_map['Qrcodes']= array (
       'null' => true,
       'default' => '301',
     ),
-    'qr_code_path' => 
+    'qr_png_path' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '255',
+      'phptype' => 'string',
+      'null' => true,
+    ),
+    'qr_svg_path' => 
     array (
       'dbtype' => 'varchar',
       'precision' => '255',
