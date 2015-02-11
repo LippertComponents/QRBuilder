@@ -5,6 +5,9 @@
  * @package qrbuilder
  * @subpackage lexicon
  */
+// for permissions:
+$_lang['perm.view_qrbuilder'] = 'View QR Builder';
+
 $_lang['qrcode'] = 'QR Code';
 $_lang['qrbuilder'] = 'QR Builder';
 $_lang['qrbuilder.desc'] = 'Manage your QR Codes.';
