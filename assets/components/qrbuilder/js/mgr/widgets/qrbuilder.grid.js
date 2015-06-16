@@ -15,36 +15,40 @@ Qrbuilder.combo.RedirectType = function(config) {
 Ext.extend(Qrbuilder.combo.RedirectType,MODx.combo.ComboBox);
 Ext.reg('qrbuilder-combo-redirect-type', Qrbuilder.combo.RedirectType);
 
-// bool 1/0
-/*
-Qrbuilder.combo.Qrboolean = function(config) {
+var activeContextKey = 'web';
+
+Qrbuilder.combo.ContextKey = function(config) {
     config = config || {};
     Ext.applyIf(config,{
-       //displayField: 'name'
-        //,valueField: 'id'
-        //,fields: ['id', 'name']
-        store: ['0', '1']
-        ,baseParams: { action: '' ,combo: true }
+        displayField: 'name'
+        ,hiddenName: 'context_key'
+        ,valueField: 'key'
+        ,value: 'web'
+        ,fields: ['key', 'name']
+        ,url: Qrbuilder.config.connectorUrl
+        ,baseParams: { action: 'mgr/contextkey/getList',combo: true }
         //,mode: 'local'
         ,editable: false
+        ,cls: 'x-window-with-tabs'
     });
-    Qrbuilder.combo.Qrboolean.superclass.constructor.call(this,config);
+    Qrbuilder.combo.ContextKey.superclass.constructor.call(this,config);
 };
-Ext.extend(Qrbuilder.combo.Qrboolean,MODx.combo.ComboBox);
-Ext.reg('qrbuilder-combo-qrboolean', Qrbuilder.combo.Qrboolean);
-*/
+//Ext.extend(MODx.combo.SlideStatus, MODx.combo.ComboBox);
+Ext.extend(Qrbuilder.combo.ContextKey,MODx.combo.ComboBox);
+Ext.reg('qrbuilder-combo-context-key', Qrbuilder.combo.ContextKey);
 
 Qrbuilder.grid.Qrbuilder = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'qrbuilder-grid-qrbuilder'
         ,url: Qrbuilder.config.connectorUrl
-        ,baseParams: { action: 'mgr/qrcode/getList' }
+        ,baseParams: { action: 'mgr/qrcode/getList', 'context_key': activeContextKey }
         ,save_action: 'mgr/qrcode/updateFromGrid'
         ,fields: [
             'id',
             'type',
             'name',
+            'context_key',
             'description', 
             'destination_url',
             'hits',
@@ -89,8 +93,7 @@ Qrbuilder.grid.Qrbuilder = function(config) {
             ,dataIndex: 'qr_link'
             ,sortable: true
             ,width: 200
-            // @TODO don't want an editor here, just copy and paste
-            ,editor: { xtype: 'textfield' }
+            ,editor: { xtype: 'displayfield' }
         },{
             header: _('qrbuilder.grid.qr_png_path')
             //,tpl: this.templates.thumb
@@ -120,7 +123,7 @@ Qrbuilder.grid.Qrbuilder = function(config) {
         },{
             header: _('qrbuilder.grid.hits')
             ,dataIndex: 'hits'
-            ,sortable: false
+            ,sortable: true
             ,width: 80
             ,editor: { xtype: 'textfield' }
         },{
@@ -152,8 +155,19 @@ Qrbuilder.grid.Qrbuilder = function(config) {
         }]
         ,tbar: [{
             text: _('qrbuilder.qrcode_create')
-            ,handler: this.createQrcode /*{ xtype: 'qrbuilder-window-qrcode-create' ,blankValues: false }*/
-        },'->',{
+            ,handler: this.createQrcode
+        },'->'
+        ,{
+            xtype: 'qrbuilder-combo-context-key'
+            ,name: 'qrbuilder_context_key'
+            ,id: 'qrbuilder-context-filter'
+            ,width: 200
+            ,allowBlank: false
+            ,listeners: {
+                'select': { fn:this.filterQRCodes, scope:this }
+                ,'change': { fn: this.filterQRCodes, scope: this }
+            }
+        },{
             xtype: 'textfield'
             ,id: 'qrbuilder-search-filter'
             ,emptyText: _('qrbuilder.search...')
@@ -177,8 +191,15 @@ Qrbuilder.grid.Qrbuilder = function(config) {
 };
 Ext.extend(Qrbuilder.grid.Qrbuilder,MODx.grid.Grid,{
     search: function(tf,nv,ov) {
+        this.getStore().setBaseParam('context_key', activeContextKey);
         var s = this.getStore();
         s.baseParams.query = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,filterQRCodes: function(cb,nv,ov) {
+        activeContextKey = cb.getValue();
+        this.getStore().setBaseParam('context_key', activeContextKey);
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }
@@ -209,12 +230,10 @@ Ext.extend(Qrbuilder.grid.Qrbuilder,MODx.grid.Grid,{
             ,use_end_date: '0'
             ,use_ad_link: '0'
         };
-        //console.log(defaultData);
+        
         this.CreateQrcodeWindow.setValues(defaultData);
         
         this.CreateQrcodeWindow.show(e.target);
-        
-        // Ext.fly('albumCreateDescription').dom.innerHTML = albumData.description;
         
     }
     ,updateQrcode: function(btn,e) {
@@ -295,6 +314,14 @@ var QrbuilderBasicTab = {
                 ,fieldLabel: _('qrbuilder.qrcode.name')
                 ,name: 'name'
                 ,anchor: '100%'
+            },{ // # 3
+                xtype: 'qrbuilder-combo-context-key'
+                ,fieldLabel: _('qrbuilder.qrcode.context_key')
+                //,boxLabel: _('qrbuilder.qrcode.?')
+                ,inputValue: activeContextKey
+                ,renderer: 'name'
+                ,name: 'context_key'
+                ,width: 300
             },{
                 xtype: 'textarea'
                 ,fieldLabel: _('qrbuilder.qrcode.description')
@@ -316,15 +343,7 @@ var QrbuilderBasicTab = {
                 ,editor: { xtype: 'datefield' } // datefield
                 //,xtype: 'datecolumn'
                 ,width: 150
-            },/*{
-                xtype: 'qrbuilder-combo-qrboolean'
-                ,fieldLabel: _('qrbuilder.qrcode.use_end_date')
-                //,boxLabel: _('qrbuilder.qrcode.?')
-                ,inputValue: '0'
-                ,renderer: 'value'
-                ,name: 'use_end_date'
-                ,anchor: '25%'
-            },*/{
+            },{
                 xtype: 'xcheckbox'
                 ,fieldLabel: _('qrbuilder.qrcode.use_end_date')
                 ,boxLabel: _('qrbuilder.qrcode.use_end_date_check')
@@ -339,13 +358,7 @@ var QrbuilderBasicTab = {
                 ,format: MODx.config.manager_date_format
                 //,altFormats: MODx.config.manager_date_format
                 ,width: 150
-            }
-        
-            /*,{
-                xtype: 'hidden'
-                ,name: 'album_id'
-            },*/
-           ,{
+            },{
                 xtype: 'qrbuilder-combo-redirect-type'
                 ,fieldLabel: _('qrbuilder.qrcode.redirect_type')
                 //,boxLabel: _('qrbuilder.qrcode.?')
@@ -403,10 +416,10 @@ var QrbuilderImageTab = {
             ,border: false
         },{
             xtype: 'textfield'
-            // @TODO readonly and allow to copy
             ,fieldLabel: _('qrbuilder.qrcode.qr_link')
             ,name: 'qr_link'
             ,anchor: '100%'
+            ,readOnly: true
         },{
             xtype: 'xcheckbox'
             ,fieldLabel: _('qrbuilder.qrcode.use_ad_link')
@@ -434,15 +447,7 @@ var QrbuilderAdvancedTab = {
     ,items:[{
             html: '<p id="qrcodeAdvancedInstructions">'+_('qrbuilder.qrcode.tab_advanced_desc')+'</p><br />'
             ,border: false
-        },/*{
-            xtype: 'qrbuilder-combo-qrboolean'
-            ,fieldLabel: _('qrbuilder.qrcode.override_url_input')
-            //,boxLabel: _('qrbuilder.qrcode.?')
-            ,inputValue: '0'
-            ,renderer: 'value'
-            ,name: 'override_url_input'
-            ,anchor: '25%'
-        },*/{
+        },{
             xtype: 'xcheckbox'
             ,fieldLabel: _('qrbuilder.qrcode.override_url_input')
             ,boxLabel: _('qrbuilder.qrcode.override_url_input_check')
@@ -459,6 +464,8 @@ var QrbuilderAdvancedTab = {
 
 Qrbuilder.window.CreateQrcode = function(config) {
     config = config || {};
+    QrbuilderBasicTab.items[3].inputValue = activeContextKey;
+    QrbuilderBasicTab.items[3].value = activeContextKey;
     
     Ext.applyIf(config,{
         title: _('qrbuilder.qrcode_create')
@@ -499,7 +506,7 @@ Ext.reg('qrbuilder-window-qrcode-create',Qrbuilder.window.CreateQrcode);
 
 Qrbuilder.window.UpdateQrcode = function(config) {
     config = config || {};
-    
+    // QrbuilderBasicTab.items[3].inputValue = activeContextKey;
     Ext.applyIf(config,{
         title: _('qrbuilder.qrcode_update')
         ,url: Qrbuilder.config.connectorUrl
@@ -534,15 +541,3 @@ Qrbuilder.window.UpdateQrcode = function(config) {
 };
 Ext.extend(Qrbuilder.window.UpdateQrcode,MODx.Window);
 Ext.reg('qrbuilder-window-qrcode-update',Qrbuilder.window.UpdateQrcode);
-
-/**
- *
- * TEST
- *  
- */
-
-Ext.onReady(function(){
-    console.log('OnReady QR-bulder widget/qrbuilder.js');
-    setTimeout("console.log('Today: '+ Qrbuilder.Util.Today + ' END: ' + Qrbuilder.Util.Enddate);", 200);
-    
-});

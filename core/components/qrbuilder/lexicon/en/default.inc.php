@@ -43,6 +43,7 @@ $_lang['qrbuilder.web_ads_desc'] = 'Create unique readable ad URLs that can be a
 
 // grid column names:
 $_lang['qrbuilder.grid.name'] = 'Name';
+$_lang['qrbuilder.grid.context_key'] = 'Context';
 $_lang['qrbuilder.grid.description'] = 'Description';
 $_lang['qrbuilder.grid.destination_url'] = 'Destination URL';
 $_lang['qrbuilder.grid.hits'] = 'Hits';
@@ -66,6 +67,7 @@ $_lang['qrbuilder.grid.edit_date'] = 'Last date updated';
 
 // qrcode Table columns for create/update forms: 
 $_lang['qrbuilder.qrcode.name'] = 'Name of QR Code/Link';
+$_lang['qrbuilder.qrcode.context_key'] = 'Select Context/Site';
 $_lang['qrbuilder.qrcode.description'] = 'Brief description of what and why the QR Code/Link are needed.';
 $_lang['qrbuilder.qrcode.destination_url'] = 'Destination URL (URL the QR code will redirect to)';
 $_lang['qrbuilder.qrcode.override_url_input'] = 'Override Analytics paramaters';

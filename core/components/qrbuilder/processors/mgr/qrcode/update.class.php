@@ -88,8 +88,19 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
             $this->setProperty('short_link', $short_link);
             
         }
-        // build qr_link: @TODO make work for site contexts
+        // build qr_link:
         $site_url = str_replace('https://', 'http://', $this->modx->getOption('site_url'));
+        
+        $contextSetting = $this->modx->getObject('modContextSetting', 
+            array(
+                'context_key' => $this->object->get('context_key'), 
+                'key' => 'site_url'
+                )
+            );
+        if ( is_object($contextSetting) ) {
+            $site_url = $contextSetting->get('value');
+        }
+        
         $url = rtrim($site_url, '/').'/'.$this->getProperty('short_link');
         // build the QR Code:
         $qr_codes = $this->modx->qrbuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
