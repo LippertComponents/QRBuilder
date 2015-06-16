@@ -8,6 +8,7 @@ $xpdo_meta_map['Qrcodes']= array (
   array (
     'type' => 'qrcode',
     'name' => NULL,
+    'context_key' => 'web',
     'description' => NULL,
     'destination_url' => NULL,
     'hits' => 0,
@@ -41,6 +42,15 @@ $xpdo_meta_map['Qrcodes']= array (
       'precision' => '128',
       'phptype' => 'string',
       'null' => true,
+    ),
+    'context_key' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '100',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => 'web',
+      'index' => 'index',
     ),
     'description' => 
     array (
@@ -173,11 +183,33 @@ $xpdo_meta_map['Qrcodes']= array (
           'collation' => 'A',
           'null' => true,
         ),
+        'context_key' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
+        ),
         'active' => 
         array (
           'length' => '',
           'collation' => 'A',
           'null' => true,
+        ),
+      ),
+    ),
+    'context_key' => 
+    array (
+      'alias' => 'context_key',
+      'primary' => false,
+      'unique' => false,
+      'type' => 'BTREE',
+      'columns' => 
+      array (
+        'context_key' => 
+        array (
+          'length' => '',
+          'collation' => 'A',
+          'null' => false,
         ),
       ),
     ),
@@ -191,6 +223,17 @@ $xpdo_meta_map['Qrcodes']= array (
       'foreign' => 'qrcode_id',
       'cardinality' => 'many',
       'owner' => 'local',
+    ),
+  ),
+  'aggregates' => 
+  array (
+    'Context' => 
+    array (
+      'class' => 'modContext',
+      'local' => 'context_key',
+      'foreign' => 'key',
+      'owner' => 'foreign',
+      'cardinality' => 'one',
     ),
   ),
 );

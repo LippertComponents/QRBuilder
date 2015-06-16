@@ -16,6 +16,7 @@
 	<object class="Qrcodes" table="qrcodes" extends="xPDOSimpleObject">
 		<field key="type" dbtype="set" precision="'qrcode','webad'" phptype="string" null="true" default="qrcode" />
 		<field key="name" dbtype="varchar" precision="128" phptype="string" null="true" />
+        <field key="context_key" dbtype="varchar" precision="100" phptype="string" null="false" default="web" index="index" />
 		<field key="description" dbtype="mediumtext" phptype="string" null="true" />
 		<field key="destination_url" dbtype="varchar" precision="255" phptype="string" null="true" />
 		<field key="hits" dbtype="int" precision="11" phptype="integer" null="true" default="0" />
@@ -34,10 +35,16 @@
 		<field key="edit_date" dbtype="datetime" phptype="datetime" null="true" />
 		
 		<composite alias="Stats" class="QrcodeStats" local="id" foreign="qrcode_id" cardinality="many" owner="local" />
+        <aggregate alias="Context" class="modContext" local="context_key" foreign="key" owner="foreign" cardinality="one" />
 
 		<index alias="URL Query" name="URL Query" primary="false" unique="true" type="BTREE" >
 			<column key="short_link" length="10" collation="A" null="true" />
+            <column key="context_key" length="" collation="A" null="false" />
 			<column key="active" length="" collation="A" null="true" />
 		</index>
+		
+        <index alias="context_key" name="context_key" primary="false" unique="false" type="BTREE">
+            <column key="context_key" length="" collation="A" null="false" />
+        </index>
 	</object>
 </model>
