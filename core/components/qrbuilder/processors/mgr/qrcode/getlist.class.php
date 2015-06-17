@@ -63,17 +63,21 @@ class QrcodeGetListProcessor extends modObjectGetListProcessor {
         
         // build qr_link:
         $site_url = $this->modx->getOption('site_url');
-        if ( isset($data['context_key']) && !isset($this->context_key_urls[$data['context_key']]) ) {
-            $contextSetting = $this->modx->getObject('modContextSetting', 
-                array(
-                    'context_key' => $data['context_key'], 
-                    'key' => 'site_url'
-                    )
-                );
-            if ( is_object($contextSetting) ) {
-                $site_url = $contextSetting->get('value');
+        if ( isset($data['context_key']) ) {
+            if ( isset($this->context_key_urls[$data['context_key']]) ) {
+                $site_url = $this->context_key_urls[$data['context_key']];
+            } else {
+                $contextSetting = $this->modx->getObject('modContextSetting', 
+                    array(
+                        'context_key' => $data['context_key'], 
+                        'key' => 'site_url'
+                        )
+                    );
+                if ( is_object($contextSetting) ) {
+                    $site_url = $contextSetting->get('value');
+                }
+                $this->context_key_urls[$data['context_key']] = $site_url;
             }
-            $this->context_key_urls[$data['context_key']] = $site_url;
         }
         //if ( !$data['use_ad_link'] ){ }
         $data['qr_link'] = rtrim($site_url, '/').'/'.$data['short_link'];
