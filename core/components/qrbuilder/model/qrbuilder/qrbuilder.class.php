@@ -137,14 +137,16 @@ class Qrbuilder {
     /**
      * Redirect
      * @param (String) $uri_search
+     * @param (String) $context_key
      * @return VOID
      */
-    public function redirect($uri_search)
+    public function redirect($uri_search, $context_key='web')
     {
         // search db:
         $qrcode = $this->modx->getObject('Qrcodes', 
             array( 
                 'short_link' => $uri_search,
+                'context_key' => $context_key,
                 'active' => true,
             )
         );

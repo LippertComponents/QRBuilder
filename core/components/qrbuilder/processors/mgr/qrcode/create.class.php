@@ -109,7 +109,7 @@ class QrcodeCreateProcessor extends modObjectCreateProcessor {
             }
             
             $url = rtrim($site_url, '/').'/'.$short_link;
-            // build the QR Code: @TODO Review: 
+            // build the QR Code: 
             $qr_codes = $this->modx->qrbuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
             $this->object->set('qr_png_path', $qr_codes['png']);
             $this->object->set('qr_svg_path', $qr_codes['svg']);

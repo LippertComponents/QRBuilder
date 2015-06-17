@@ -25,7 +25,7 @@ switch($eventName) {
             /**
              * Will redirect to proper link if found and valid
              */
-            $modx->qrbuilder->redirect($uri);
+            $modx->qrbuilder->redirect($uri, $modx->context->key);
         }
 
     break;
