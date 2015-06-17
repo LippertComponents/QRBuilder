@@ -61,7 +61,7 @@ class QrcodeGetListProcessor extends modObjectGetListProcessor {
     public function prepareRow(xPDOObject $object) {
         $data = $object->toArray();
         
-        // build qr_link: @TODO make work for site contexts
+        // build qr_link:
         $site_url = $this->modx->getOption('site_url');
         if ( isset($data['context_key']) && !isset($this->context_key_urls[$data['context_key']]) ) {
             $contextSetting = $this->modx->getObject('modContextSetting', 

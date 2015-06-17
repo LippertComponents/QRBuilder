@@ -38,27 +38,6 @@ class Qrbuilder {
 
         $this->modx->addPackage('qrbuilder',$this->config['modelPath']);
     }
-
-    /**
-     * Initializes the class into the proper context
-     *
-     * @access public
-     * @param string $ctx
-     */
-    public function initialize($ctx = 'web') {
-        switch ($ctx) {
-            case 'mgr':
-                $this->modx->lexicon->load('qrbuilder:default');
-
-                if (!$this->modx->loadClass('qrbuilderControllerRequest',$this->config['modelPath'].'qrbuilder/request/',true,true)) {
-                    return 'Could not load controller request handler.';
-                }
-                $this->request = new QrbuilderControllerRequest($this);
-                return $this->request->handleRequest();
-            break;
-        }
-        return true;
-    }
     
     /**
      * @access public
