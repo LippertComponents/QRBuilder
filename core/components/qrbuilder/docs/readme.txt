@@ -41,7 +41,6 @@ QR Codes to be less complex so they will have better compatibility with QR scann
 
 ## TODO before can be put into MODX Extras:
  - Build script
- - Work with multi context
  - more testing
 
 Fork and do a pull request on the above TODO list would be appreciated.

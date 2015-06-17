@@ -34,7 +34,7 @@ QR Codes to be less complex so they will have better compatibility with QR scann
 
 ## TODO before can be put into MODX Extras:
  - Build script
- - Work with multi context
+ - Work with multi context ~ Added see #2
  - Make system settings or custom settings page
  - More testing
 
