@@ -192,6 +192,11 @@ class Qrbuilder {
             } else {
                 //$params = $this->modx->fromJSON($qrcode->get('build_url_params'));
                 $params = json_decode($qrcode->get('build_url_params'), true);
+                foreach ($params as $key => $value) {
+                    if ( empty($value) && $value !== 0 ) {
+                        unset($params[$key]);
+                    }
+                }
                 $str = http_build_query($params);
                 
                 $pos = strpos($url, '?');
