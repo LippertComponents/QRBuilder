@@ -187,7 +187,7 @@ class Qrbuilder {
             // build URL:
             $url = $qrcode->get('destination_url');
             /** @var string $page_fragment */
-            $page_fragment = '';
+            $page_fragment = null;
             if ( strpos($url, '#') !== false ) {
                 $page_fragment = substr($url, strpos($url, '#')+1);
                 $url = substr($url, 0, strpos($url, '#'));
