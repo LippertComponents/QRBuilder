@@ -1,7 +1,8 @@
 --------------------
 Extra: QR-Builder
 --------------------
-Version: 1.0
+Version: 1.0 beta4
+Build date: 8/16/2016
 Since: February 5th, 2015
 Author: Josh Gulledge <jgulledge19@outlook.com>
 
