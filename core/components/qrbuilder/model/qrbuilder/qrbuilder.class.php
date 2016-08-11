@@ -186,18 +186,24 @@ class Qrbuilder {
             
             // build URL:
             $url = $qrcode->get('destination_url');
+            /** @var string $page_fragment */
+            $page_fragment = '';
+            if ( strpos($url, '#') !== false ) {
+                $page_fragment = substr($url, strpos($url, '#')+1);
+                $url = substr($url, 0, strpos($url, '#'));
+            }
+
+            //$params = $this->modx->fromJSON($qrcode->get('build_url_params'));
+            $params = json_decode($qrcode->get('build_url_params'), true);
+            foreach ($params as $key => $value) {
+                if ( empty($value) && $value !== 0 ) {
+                    unset($params[$key]);
+                }
+            }
             if ( is_numeric($url) ) {
                 // Assume MODX Resource
-                // @TODO
+                $url = $this->modx->makeUrl($url, '', $params, 'full');
             } else {
-                //$params = $this->modx->fromJSON($qrcode->get('build_url_params'));
-                $params = json_decode($qrcode->get('build_url_params'), true);
-                // @TODO allow passing of params on QRCode?
-                foreach ($params as $key => $value) {
-                    if ( empty($value) && $value !== 0 ) {
-                        unset($params[$key]);
-                    }
-                }
                 $str = http_build_query($params);
                 
                 $pos = strpos($url, '?');
@@ -211,15 +217,22 @@ class Qrbuilder {
                 } else {
                     $url .= '?'.$str;
                 }
-                
+            }
+            if ( !is_null($page_fragment) ) {
+                $url .= '#'.$page_fragment;
             }
             
             // now send:
-            $options = array('responseCode' => 'HTTP/1.1 302 Found');
+            /** @var string $http - see http://php.net/manual/en/function.header.php#92305 */
+            $http = 'HTTP/1.1';
+            if ( isset($_SERVER["SERVER_PROTOCOL"]) ) {
+                $http = $_SERVER["SERVER_PROTOCOL"];
+            }
+            $options = array('responseCode' => $http.' 302 Found');
             
             $redirect_type = $qrcode->get('redirect_type');
             if ( $redirect_type == 301 ){
-                $options = array('responseCode' => 'HTTP/1.1 301 Moved Permanently');
+                $options = array('responseCode' => $http.' 301 Moved Permanently');
             }
             //echo 'URL: '.$url;exit();
             $this->modx->sendRedirect($url, $options);
