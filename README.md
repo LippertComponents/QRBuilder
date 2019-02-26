@@ -42,12 +42,10 @@ Add the following to your local composer.json file
 ```
 
 ## What is installed in MODX
- - Custom database tables: modx_mb_sequence
+ - Custom database tables: modx_qrcodes and modx_qrcode_stats
  - A [Plugin](https://rtfm.modx.com/revolution/2.x/developing-in-modx/basic-development/plugins): 
  [QRBuilder](/src/elements/plugins/QRBuilder.php) and attach System Events:
-    - OnDocFormSave
-    - OnResourceSort
-    - OnCacheUpdate
+    - OnPageNotFound
  - MODX namespace: qrbuilder
  - QR Builder CMP to manager the QR codes in the MODX Manager
     
