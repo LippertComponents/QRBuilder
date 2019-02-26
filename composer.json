@@ -1,0 +1,26 @@
+{
+  "name": "lci/modx-qrbuilder",
+  "description": "QRBuilder is a CMP for MODX Revolution",
+  "license": "MIT",
+  "keywords": [
+    "modx", "qrcode"
+  ],
+  "authors": [
+    {
+      "name": "LCI Web Development Team",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "LCI\\MODX\\QRBuilder\\": "src/"
+    }
+  },
+  "require": {
+    "lci/orchestrator": "^1.0.0",
+    "endroid/qr-code": "^3.5.4",
+    "php": "^7.1.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
