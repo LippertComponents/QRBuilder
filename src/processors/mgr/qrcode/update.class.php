@@ -1,4 +1,5 @@
 <?php
+use LCI\MODX\QRBuilder\QRBuilder;
 /**
  * @package QR-Builder
  * @subpackage processors
@@ -74,14 +75,12 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
             $short_link = str_replace(array('   ','  ',' '), '-', trim(trim($this->getProperty('short_link')), '/'));
             // @TODO check for special chars, strtolower?
             if ( empty($short_link) ) {
-                // @TODO check that SEO/Freindly URLs are in place
                 $this->addFieldError('short_link', $this->modx->lexicon('qrbuilder.qrcode_err_empty_short_link'));
             } else if ($this->doesAlreadyExist(array('short_link' => $short_link, 'id:NOT IN' => array($this->object->get('id')) ))) {
                 $this->addFieldError('short_link', $this->modx->lexicon('qrbuilder.qrcode_err_short_link_exists'));
             }
         } else {
              // build the qr link:
-            // this requires SEO/Friendly URLs: @TODO make work without friendly URLs
             // @TODO make a system setting of setting in CMP to change the prefix
             $short_link = 'qr*'.base_convert($this->object->get('id'), 10, 36);
             
@@ -103,7 +102,8 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
         
         $url = rtrim($site_url, '/').'/'.$this->getProperty('short_link');
         // build the QR Code:
-        $qr_codes = $this->modx->qrbuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
+        $qrBuilder = new QRBuilder($this->modx);
+        $qr_codes = $qrBuilder->buildQRCode($url, 'qr-'.$this->object->get('id') );
         //$this->addFieldError('name', 'Error Check for Update->beforeSet(), Path: '.$qr_code_path);
         $this->setProperty('qr_png_path', $qr_codes['png']);
         $this->setProperty('qr_svg_path', $qr_codes['svg']);

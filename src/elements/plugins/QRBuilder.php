@@ -3,11 +3,9 @@
  * @package qrbuilder
  */
 /* load Qrbuilder class */
-$corePath = $modx->getOption('qrbuilder.core_path',null,$modx->getOption('core_path').'components/qrbuilder/');
-require_once $corePath.'model/qrbuilder/qrbuilder.class.php';
-if ( !isset($modx->qrbuilder) ){
-    $modx->qrbuilder = new Qrbuilder($modx);
-}
+use LCI\MODX\QRBuilder\QRBuilder;
+
+$qrBuilder = new QRBuilder($modx);
 
 $eventName = $modx->event->name;
 switch($eventName) {
@@ -17,7 +15,7 @@ switch($eventName) {
         $parts = parse_url($_SERVER['REQUEST_URI']);
         $uri = $parts['path'];
 
-        $baseUrl = $modx->getOption('base_url',null,MODX_BASE_URL);
+        $baseUrl = $modx->getOption('base_url', null, MODX_BASE_URL);
         if(!empty($baseUrl) && $baseUrl != '/' && $baseUrl != ' ' /* && $baseUrl != '/'.$modx->context->get('key').'/' */) {
             $uri = str_replace($baseUrl,'',$uri);
         }
@@ -27,11 +25,8 @@ switch($eventName) {
             /**
              * Will redirect to proper link if found and valid
              */
-            $modx->qrbuilder->redirect($uri, $modx->context->key);
+            $qrBuilder->redirect($uri, $modx->context->key);
         }
 
     break;
-
 }
-
-return null;

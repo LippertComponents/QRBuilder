@@ -1,16 +1,23 @@
 <?php
+namespace LCI\MODX\QRBuilder;
+
+use Endroid\QrCode\QrCode;
+use DateTime;
+use modX;
+use PDO;
+
 /**
  * @package qrbuilder
  */
-class Qrbuilder {
+class QRBuilder {
     /**
      * Constructs the Qrbuilder object
      *
      * @param modX &$modx A reference to the modX object
      * @param array $config An array of configuration options
      */
-    function __construct(modX &$modx,array $config = array()) {
-        $this->modx =& $modx;
+    function __construct(modX $modx, array $config = array()) {
+        $this->modx = $modx;
 
         $corePath = $this->modx->getOption('core_path');
         $basePath = $this->modx->getOption('qrbuilder.core_path',$config,$this->modx->getOption('core_path').'components/qrbuilder/');
@@ -27,8 +34,6 @@ class Qrbuilder {
             'chunksPath' => $basePath.'elements/chunks/',
             'qrCodeDir' => $qrCodeDir,
             'qrCodePath' => $assetsPath.$qrCodeDir,
-            // from: http://modx.com/extras/package/ludwigqrcode and https://github.com/MoonMaker/modx/blob/master/QRCode/core/components/ludwigqrcode/
-            'phpQrCodePath' => $corePath.'components/ludwigqrcode/model/phpqrcode/lib/',
             'jsUrl' => $assetsUrl.'js/',
             'cssUrl' => $assetsUrl.'css/',
             'assetsUrl' => $assetsUrl,
@@ -38,100 +43,53 @@ class Qrbuilder {
 
         $this->modx->addPackage('qrbuilder',$this->config['modelPath']);
     }
-    
+
     /**
-     * @access public
-     * @param (String) $url
-     * @param (String) $file_name
-     * @return (String) file path
-     * 
+     * @param string $url
+     * @param string $file_name
+     * @return array
      */
     public function buildQRCode($url, $file_name)
     {
-        // qrCodePath
-        if ( !file_exists($this->config['phpQrCodePath'].'full/qrlib.php') ) {
-            return 'NOT FOUND: '.$this->config['phpQrCodePath'];
-            return false;
-        }
-        
-        require_once $this->config['phpQrCodePath'].'full/qrlib.php';
-        
         // filename:
-        
         $png_file = $this->config['qrCodePath'].$file_name.'.png';
         $svg_file = $this->config['qrCodePath'].$file_name.'.svg';
-        
-        $qr = new QRcode();
-        /**
-         * Creates PNG image containing QR-Code.
-         * Simple helper function to create QR-Code Png image with one static call.
-         * @param String $text text string to encode
-         * @param String $outfile (optional) output file name, if __false__ outputs to browser with required headers
-         * @param Integer $level (optional) error correction level __QR_ECLEVEL_L__, __QR_ECLEVEL_M__, __QR_ECLEVEL_Q__ or __QR_ECLEVEL_H__
-         * @param Integer $size (optional) pixel size, multiplier for each 'virtual' pixel
-         * @param Integer $margin (optional) code margin (silent zone) in 'virtual' pixels
-         * @param Boolean $saveandprint (optional) if __true__ code is outputed to browser and saved to file, otherwise only saved to file. It is effective only if $outfile is specified.
-        */
-        $qr->png(
-            $url,
-            $png_file,
-            QR_ECLEVEL_H,
-            100 // @TODO have this as a system setting
-        );
-        
-        //QRcode::png($url, $pngAbsoluteFilePath);
-        if ( 1 == 1 ) {
-            /**
-             * Creates SVG with QR-Code.
-             * Simple helper function to create QR-Code SVG with one static call.
-             * @param String $text text string to encode
-             * @param Boolean $elemId (optional) target SVG tag id attribute, if __false__ SVG tag with auto id will be created
-             * @param String $outfile (optional) output file name, when __false__ file is not saved
-             * @param Integer $level (optional) error correction level __QR_ECLEVEL_L__, __QR_ECLEVEL_M__, __QR_ECLEVEL_Q__ or __QR_ECLEVEL_H__
-             * @param Integer $width (optional) SVG element width (sam as height)
-             * @param Integer $size (optional) pixel size, multiplier for each 'virtual' pixel
-             * @param Integer $margin (optional) code margin (silent zone) in 'virtual' pixels
-             * @param Boolean $compress (optional) if __true__, compressed SVGZ (instead plaintext SVG) is saved to file
-             * @return String containing SVG tag
-             **/
-            $output = $qr->svg( 
-                $url,
-                false, //$val['id'],
-                $svg_file,
-                QR_ECLEVEL_H,
-                800,//$val['width'],
-                100,//$val['size'],
-                10, //$val['margin'],
-                false//$val['compress'],
-                //$val['back_color'],
-                //$val['fore_color']
-            );
-        }
-        return array(
-                'png' => $this->config['qrCodeDir'].$file_name.'.png',
-                'svg' => $this->config['qrCodeDir'].$file_name.'.svg',
-            );
+
+        $qrCode = new QRcode($url);
+        $qrCode->setSize(100);
+        $qrCode->setWriterByName('png');
+        $qrCode->writeFile($png_file);
+
+        $qrCode = new QRcode($url);
+        $qrCode->setSize(800);
+        $qrCode->setWriterByName('svg');
+        $qrCode->writeFile($svg_file);
+
+        return [
+            'png' => $this->config['qrCodeDir'].$file_name.'.png',
+            'svg' => $this->config['qrCodeDir'].$file_name.'.svg',
+        ];
     }
     
     /**
      * Redirect
-     * @param (String) $uri_search
-     * @param (String) $context_key
+     * @param string $uri_search
+     * @param string $context_key
      * @return VOID
      */
     public function redirect($uri_search, $context_key='web')
     {
         // search db:
-        $qrcode = $this->modx->getObject('Qrcodes', 
-            array( 
+        $qrcode = $this->modx->getObject(
+            'Qrcodes',
+            [
                 'short_link' => $uri_search,
                 'context_key' => $context_key,
                 'active' => true,
-            )
+            ]
         );
-        //echo 'Find Code';exit();
-        if ( !empty($qrcode) && is_object($qrcode) ) {
-            //echo 'Found ONE';
+
+        if (!empty($qrcode) && is_object($qrcode)) {
             // if valid build URL and send:
             $start = $this->getTime($qrcode->get('start_date'));
             
@@ -140,7 +98,7 @@ class Qrbuilder {
             $now = time();// @TODO system setting time offset
             $use_end = $qrcode->get('use_end_date');
             
-            if ( $start > $now || ( $end < $now && $use_end ) ) {
+            if ( $start > $now || ($end < $now && $use_end)) {
                 $qrcode->set('active', 0);
                 // $qrcode->save();
                 return;
@@ -148,8 +106,7 @@ class Qrbuilder {
             // record stats:
             $qrcode->set('hits', $qrcode->get('hits')+1);
             $qrcode->save();
-            
-            // @TODO make this xpdo?
+
             $sql = "INSERT INTO modx_qrcode_stats
                 (
                     qrcode_id, 
@@ -180,7 +137,6 @@ class Qrbuilder {
             $error = $sth->errorInfo();
             
             if ( $error[0] != '00000' ) {
-                //print_r($sth->errorInfo());
                 $this->modx->log(modX::LOG_LEVEL_ERROR,'[QRBuilder] Error recording stat data: '.print_r($sth->errorInfo(), true) );
             }
             
@@ -193,7 +149,6 @@ class Qrbuilder {
                 $url = substr($url, 0, strpos($url, '#'));
             }
 
-            //$params = $this->modx->fromJSON($qrcode->get('build_url_params'));
             $params = json_decode($qrcode->get('build_url_params'), true);
             foreach ($params as $key => $value) {
                 if ( empty($value) && $value !== 0 ) {
@@ -228,13 +183,13 @@ class Qrbuilder {
             if ( isset($_SERVER["SERVER_PROTOCOL"]) ) {
                 $http = $_SERVER["SERVER_PROTOCOL"];
             }
-            $options = array('responseCode' => $http.' 302 Found');
+            $options = ['responseCode' => $http.' 302 Found'];
             
             $redirect_type = $qrcode->get('redirect_type');
             if ( $redirect_type == 301 ){
-                $options = array('responseCode' => $http.' 301 Moved Permanently');
+                $options = ['responseCode' => $http.' 301 Moved Permanently'];
             }
-            //echo 'URL: '.$url;exit();
+
             $this->modx->sendRedirect($url, $options);
         }
         
@@ -249,13 +204,8 @@ class Qrbuilder {
      */
     public function getTime($date, $format='Y-m-d')
     {
-        $time = time();
-        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-            $tmpDate = DateTime::createFromFormat($format, $date );
-            $time = $tmpDate->getTimestamp();
-        } else {
-            $time = strtotime( $date);
-        }
+        $tmpDate = DateTime::createFromFormat($format, $date );
+        $time = $tmpDate->getTimestamp();
         
         return $time;
     }
