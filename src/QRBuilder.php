@@ -19,9 +19,8 @@ class QRBuilder {
     function __construct(modX $modx, array $config = array()) {
         $this->modx = $modx;
 
-        $corePath = $this->modx->getOption('core_path');
-        $basePath = $this->modx->getOption('qrbuilder.core_path',$config,$this->modx->getOption('core_path').'components/qrbuilder/');
-        $assetsUrl = $this->modx->getOption('qrbuilder.assets_url',$config,$this->modx->getOption('assets_url').'components/qrbuilder/');
+        $basePath = $this->modx->getOption('patents.core_path', $config, $this->modx->getOption('core_path').'vendor/lci/modx-qrbuilder/src/');
+        $assetsUrl = $this->modx->getOption('qrbuilder.assets_url', $config,$this->modx->getOption('assets_url').'components/qrbuilder/');
         $assetsPath = $this->modx->getOption('qrbuilder.assets_path', $config,$this->modx->getOption('assets_path').'components/qrbuilder/');
         $qrCodeDir = $this->modx->getOption('qrbuilder.qr_code_dir', $config, 'images/qr/');
         
