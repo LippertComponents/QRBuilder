@@ -9,6 +9,10 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
     MINOR version when you add functionality in a backwards-compatible manner, and
     PATCH version when you make backwards-compatible bug fixes.
 
+## [0.2.1](https://github.com/LippertComponents/QRBuilder/releases/tag/v0.2.1) - 2020-01-20
+### Changed
+- Merged PR from sdrenth - Updating GA campaign parameters
+
 ## [0.2.0](https://github.com/LippertComponents/QRBuilder/releases/tag/v0.2.0) - 2019-03-28
 ### Changed
 - Set a release tag
