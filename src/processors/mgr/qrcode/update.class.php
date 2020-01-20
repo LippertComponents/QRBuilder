@@ -57,11 +57,11 @@ class QrcodeUpdateProcessor extends modObjectUpdateProcessor {
             
         } else {
             $params = array(
-                'campaign_source' => $this->getProperty('campaign_source'),
-                'campaign_medium' => $this->getProperty('campaign_medium'),
-                'campaign_term' => $this->getProperty('campaign_term'),
-                'campaign_content' => $this->getProperty('campaign_content'),
-                'campaign_name' => $this->getProperty('campaign_name')
+                'utm_source'   => $this->getProperty('campaign_source'),
+                'utm_medium'   => $this->getProperty('campaign_medium'),
+                'utm_term'     => $this->getProperty('campaign_term'),
+                'utm_content'  => $this->getProperty('campaign_content'),
+                'utm_campaign' => $this->getProperty('campaign_name')
             );
             $params_str = json_encode($params);
             $this->setProperty('build_url_params', $params_str);
